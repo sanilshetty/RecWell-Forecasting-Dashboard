@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RecWell Student Wage Budget Tracker · Sample</title>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--ink:#16181d;--muted:#6b7180;--line:#e7e9ee;--gold:#CFB991;--gold-d:#8E6F3E;--black:#000;
+--fc:#9aa3b5;--act:#2f6fec;--py:#c9a55c;--ok:#1f9d61;--okbg:#e6f6ee;--under:#2f6fec;--underbg:#e8effd;--over:#d64545;--overbg:#fdecec;--na:#8a8f9c;--nabg:#f0f1f4}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+.app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+aside{background:#fff;border-right:1px solid var(--line);padding:22px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;margin:0 6px 18px}
+.brand .mk{width:34px;height:34px;border-radius:9px;background:#000;color:var(--gold);display:grid;place-items:center;font-size:15px;font-weight:900}
+.brand small{display:block;font-weight:500;font-size:11.5px;color:var(--muted)}
+.who{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:14px}
+.who .av{width:34px;height:34px;border-radius:50%;background:var(--gold);display:grid;place-items:center;font-weight:700}
+.who b{display:block;font-size:13px}.who span{font-size:11.5px;color:var(--muted)}
+.navh{font-size:12px;color:var(--muted);margin:14px 10px 4px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#2a2e37;cursor:pointer;font-weight:500;border:0;background:none;width:100%;text-align:left;font-size:14px}
+.nav:hover{background:#f6f6f8}.nav.on{background:#faf5ea;color:#000;font-weight:650;box-shadow:inset 3px 0 0 var(--gold)}
+.nav svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8}
+.nav .badge{margin-left:auto;background:#000;color:var(--gold);font-size:11px;border-radius:20px;padding:1px 8px;font-weight:700}
+main{padding:26px 30px 60px;min-width:0}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+h1{margin:0;font-size:28px;letter-spacing:-.02em}.sub{color:var(--muted);margin-top:4px}
+.ctrls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-weight:600;cursor:pointer;display:inline-flex;gap:8px;align-items:center;font-size:13.5px;color:var(--ink)}
+.btn.pri{background:#000;color:var(--gold);border-color:#000}.btn:hover{filter:brightness(.97)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.card h3{margin:0 0 2px;font-size:15.5px;display:flex;align-items:center;gap:8px}.card .hint{color:var(--muted);font-size:12.5px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.kpi .lab{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px}.kpi .lab i{width:28px;height:28px;border-radius:8px;background:#faf5ea;display:grid;place-items:center;font-style:normal;color:var(--gold-d)}
+.kpi .val{font-size:30px;font-weight:750;letter-spacing:-.02em;margin:14px 0 4px;font-variant-numeric:tabular-nums}
+.kpi .cmp{font-size:12.5px;color:var(--muted)}.up{color:var(--ok);font-weight:650}.dn{color:var(--over);font-weight:650}
+.grid2{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;margin-bottom:16px}
+.scrub{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.scrub input[type=range]{flex:1;min-width:220px;accent-color:#000}
+.scrub .asof{font-weight:700;min-width:170px;font-variant-numeric:tabular-nums}
+.play{width:38px;height:38px;border-radius:50%;background:#000;color:var(--gold);border:0;cursor:pointer;display:grid;place-items:center;font-size:14px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{font-size:12px;color:var(--muted);font-weight:600;text-align:left;padding:10px 10px;background:#fafbfc;border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none}
+th.r,td.r{text-align:right;white-space:nowrap}td{padding:11px 10px;border-bottom:1px solid #f0f1f4;vertical-align:middle}
+tr:hover td{background:#fcfcfd}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:650;white-space:nowrap}
+.pill:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.s-ok{color:var(--ok);background:var(--okbg)}.s-under{color:var(--under);background:var(--underbg)}.s-over{color:var(--over);background:var(--overbg)}.s-na{color:var(--na);background:var(--nabg)}
+.bar{position:relative;height:10px;background:#eef0f4;border-radius:6px;overflow:visible;min-width:140px}
+.bar .f{position:absolute;inset:0 auto 0 0;border-radius:6px;background:var(--act);transition:width .35s}
+.bar .m{position:absolute;top:-4px;bottom:-4px;width:2px;background:#000;border-radius:2px;transition:left .35s}
+.bar .fc{position:absolute;inset:0 auto 0 0;border-radius:6px;background:#d9dde6;transition:width .35s}
+.unitname b{display:block}.unitname span{font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tab{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 12px;cursor:pointer;font-weight:600;font-size:13px}
+.tab.on{background:#000;color:var(--gold);border-color:#000}
+.legend{display:flex;gap:16px;font-size:12.5px;color:var(--muted);flex-wrap:wrap}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.pp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.pp{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;cursor:default;transition:transform .15s}
+.pp:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.05)}
+.pp .h{display:flex;justify-content:space-between;font-weight:700;font-size:13px}.pp .h span{font-weight:500;color:var(--muted);font-size:11.5px}
+.pp .n{font-size:12px;color:var(--muted);margin-top:6px;display:flex;justify-content:space-between}
+.pp .vb{height:8px;border-radius:5px;background:#eef0f4;margin-top:8px;position:relative;overflow:hidden}
+.pp .vb div{position:absolute;inset:0 auto 0 0;border-radius:5px}
+.pp.future{opacity:.62}.pp.cur{outline:2px solid var(--gold)}
+.chart{width:100%;height:auto;display:block}
+.tip{position:fixed;pointer-events:none;background:#111;color:#fff;font-size:12px;padding:8px 10px;border-radius:8px;opacity:0;transition:opacity .1s;z-index:9;line-height:1.5;font-variant-numeric:tabular-nums}
+input.cell{width:78px;border:1px solid transparent;background:#fffbea;border-radius:6px;padding:5px 6px;text-align:right;font:inherit;color:#1f4fd1;font-variant-numeric:tabular-nums}
+input.cell:focus{outline:2px solid var(--gold);background:#fff}
+.search{border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit;min-width:240px;background:#fff}
+select{border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit;background:#fff}
+.note{background:#faf5ea;border:1px solid #efe3c8;border-radius:12px;padding:10px 14px;font-size:13px;color:#5b4724;margin-bottom:14px}
+.gi{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.gi .card dl{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;margin:12px 0 0;font-size:13px}.gi dt{color:var(--muted)}.gi dd{margin:0}
+.flag{margin-top:10px;font-size:12.5px;background:#fdf3f3;border:1px solid #f6d6d6;color:#8a2f2f;border-radius:10px;padding:8px 10px}
+.q{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f0f1f4}.q input{margin-top:3px;accent-color:#000;width:16px;height:16px}.q.done span{text-decoration:line-through;color:var(--muted)}
+.tol{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}.tol input{width:110px;accent-color:#000}
+.heat td{padding:0;border:2px solid #fff;text-align:center;font-size:11px;height:30px;min-width:46px;border-radius:6px}.heat th{background:none;cursor:default;text-align:center}
+.vk{display:flex;flex-direction:column}.vk .lab{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px}.vk .lab i{width:28px;height:28px;border-radius:8px;background:#faf5ea;display:grid;place-items:center;font-style:normal;color:var(--gold-d)}
+.vrow{display:flex;align-items:center;gap:14px;margin-top:8px}.vbig{font-size:24px;font-weight:750;letter-spacing:-.02em;margin-bottom:6px}
+.leg{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted)}.leg i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.vfoot{margin-top:auto;padding-top:6px;font-size:12.5px;color:var(--muted)}
+.scen{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.sc{cursor:pointer;border:2px solid var(--line);transition:border-color .15s,background .15s}.sc:hover{border-color:#d8cba9}.sc.on{border-color:#000;background:#fffdf6}.sc.combo{cursor:default;background:#fafbfc}
+.sc .lab{display:flex;align-items:center;gap:8px;font-weight:650;font-size:14px}.sc .lab i{width:28px;height:28px;border-radius:8px;background:#faf5ea;display:grid;place-items:center;font-style:normal;color:var(--gold-d)}
+.sch{display:flex;justify-content:space-between;align-items:center;gap:8px}.scv{display:flex;justify-content:space-between;align-items:flex-end;gap:8px}.scd{font-size:22px;font-weight:750;letter-spacing:-.02em}
+.sw{width:38px;height:22px;border-radius:12px;background:#d9dde6;position:relative;flex:none;transition:background .2s}.sw:after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s}.sw.on{background:#000}.sw.on:after{left:19px;background:var(--gold)}
+.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}.facts div{border:1px solid var(--line);border-radius:10px;padding:10px 12px}.facts span{display:block;font-size:12px;color:var(--muted)}.facts b{font-size:15px}
+@media(max-width:1100px){.scen{grid-template-columns:repeat(2,1fr)}}
+.page{display:none}.page.on{display:block;animation:fade .25s}@keyframes fade{from{opacity:0;transform:translateY(4px)}}
+.small{font-size:12px;color:var(--muted)}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+@media(max-width:800px){.app{grid-template-columns:1fr}aside{position:static;height:auto}main{padding:18px}}
+</style></head><body>
+<div class="app">
+<aside>
+  <div class="brand"><div class="mk">RW</div><div>RecWell<small>Student Wage Forecast</small></div></div>
+  <div class="who"><div class="av">PT</div><div><b>PurdueTHINK</b><span>FY27 · Sample data</span></div></div>
+  <div class="navh">Main Menu</div>
+  <button class="nav on" data-p="dash"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Dashboard</button>
+  <button class="nav" data-p="pp"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Pay Periods</button>
+  <button class="nav" data-p="bva"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Budget vs Actual</button>
+  <div class="navh">Model</div>
+  <button class="nav" data-p="calc"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M14 12h2M8 16h2M14 16h2"/></svg>Budget Builder</button>
+  <div class="navh">Reference</div>
+  <button class="nav" data-p="units"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Units &amp; Data</button>
+  <button class="nav" data-p="qs"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5v.01"/></svg>Open Questions<span class="badge" id="qbadge"></span></button>
+  <div style="margin-top:auto" class="note" style="font-size:12px"><b>Sample data.</b> All figures, names and position numbers are made up for demonstration. The layout mirrors the RecWell wage-forecast workbook.</div>
+</aside>
+<main>
+  <div class="top">
+    <div><h1 id="ttl">Dashboard</h1><div class="sub" id="subttl">FY27 student wages — actuals vs approved budget</div></div>
+    <div class="ctrls">
+      <label class="tol">Variance tolerance <input type="range" id="tol" min="1" max="25" value="5"><span id="tolv">5%</span></label>
+      <button class="btn pri" id="exp">⧉ Copy CSV</button>
+    </div>
+  </div>
+  <div class="scrub" id="scrub">
+    <button class="play" id="play" title="Play through the fiscal year">▶</button>
+    <div><div class="small">Showing data as of</div><div class="asof" id="asof"></div></div>
+    <input type="range" id="day" min="0" max="377" value="0">
+    <button class="btn" id="today">Today</button><span class="small" style="flex-basis:100%">Sample year: actuals are simulated for every pay period, so you can play past today to see how the year could finish.</span>
+  </div>
+
+  <section class="page on" id="p-dash">
+    <div class="kpis" id="kpis"></div>
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap">
+        <div><h3>Budget used by unit</h3><div class="hint">Bar = actual spend as a share of the annual budget. Black tick = share of the budget scheduled to be spent by this date.</div></div>
+        <div class="legend"><span><i style="background:var(--act)"></i>Budget used</span><span><i style="background:#000;width:3px"></i>Budget scheduled to date</span></div>
+      </div>
+      <div style="overflow:auto;margin-top:10px"><table id="unitTbl"></table></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>Budget vs actual, to date</h3><div class="hint">Budget scheduled for the posted pay periods vs what was actually paid.</div><div id="ch-bva" style="margin-top:12px"></div></div>
+      <div class="card"><h3>Projected year-end vs annual budget</h3><div class="hint">Bar = projection at the current run rate. Black tick = approved budget.</div><div id="ch-proj" style="margin-top:12px"></div></div>
+    </div>
+    <div class="card"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px"><div><h3>Monthly budget vs actual — all units</h3><div class="hint">Pay periods grouped by the month they start in.</div></div>
+      <div class="legend"><span><i style="background:#d9dde6"></i>Budget</span><span><i style="background:var(--act)"></i>Actual</span><span><i style="background:#b9cdf7"></i>Not yet posted</span></div></div><div id="ch-month" style="margin-top:10px"></div></div>
+  </section>
+
+  <section class="page" id="p-pp">
+    <div class="tabs" id="ppTabs"></div>
+    <div class="note" id="ppNote"></div>
+    <div class="kpis" id="ppKpis"></div>
+    <div class="grid2">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px"><div><h3>Cumulative spend vs budget</h3><div class="hint">Dotted blue = projection at the current run rate.</div></div>
+        <div class="legend"><span><i style="background:var(--fc)"></i>Budget</span><span><i style="background:var(--act)"></i>Actual</span><span><i style="background:#8fb0f5"></i>Projection</span></div></div>
+        <div id="ch-cum" style="margin-top:8px"></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px"><div><h3>Budget vs actual per pay period</h3><div class="hint">Grey = budget, coloured = actual.</div></div></div>
+        <div id="ch-ppbars" style="margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px"><div><h3>Budget used by pay period</h3><div class="hint">Each bar = actual as a share of that period's budget. Green within tolerance, blue under, red over.</div></div>
+      <div class="legend"><span><i style="background:var(--ok)"></i>On budget</span><span><i style="background:var(--under)"></i>Under</span><span><i style="background:var(--over)"></i>Over</span><span><i style="background:#d9dde6"></i>Not yet posted</span></div></div>
+      <div class="pp-grid" id="ppGrid" style="margin-top:14px"></div>
+    </div>
+    <div class="card"><h3>Pay period detail</h3><div style="overflow:auto;margin-top:10px"><table id="ppTbl"></table></div></div>
+  </section>
+
+  <section class="page" id="p-bva">
+    <div class="kpis" id="bvaKpis"></div>
+    <div class="grid2">
+      <div class="card"><h3>Variance to budget by unit</h3><div class="hint">Actual minus budget for posted pay periods. Shaded band = tolerance.</div><div id="ch-var" style="margin-top:12px"></div></div>
+      <div class="card"><h3>Variance heatmap — unit × month</h3><div class="hint">Actual vs budget for each month. Hover a cell for details.</div><div id="ch-heat" style="margin-top:12px"></div></div>
+    </div>
+    <div class="card" style="margin-bottom:16px"><h3>Remaining budget &amp; burn rate</h3><div class="hint">What each unit can still spend per pay period to land on budget, compared with what it is spending now.</div><div style="overflow:auto;margin-top:10px"><table id="burnTbl"></table></div></div>
+    <div class="card"><h3>Budget vs actual summary</h3><div class="hint">Click a column header to sort.</div><div style="overflow:auto;margin-top:10px"><table id="bvaTbl"></table></div></div>
+  </section>
+
+  <section class="page" id="p-calc">
+    <div class="note">Build the wage budget position by position. Yellow cells are inputs. Turn on a scenario card to see its effect, or combine them; each card's value can be changed. Formula: wage × hours/week × employees × (1 − shrinkage) × weeks × (1 − work-study). <button class="btn" id="resetCalc" style="margin-left:8px;padding:5px 10px">Reset</button></div>
+    <div class="tabs" id="calcTabs"></div>
+    <div class="scen" id="scen"></div>
+    <div class="kpis" id="calcKpis"></div>
+    <div class="grid2">
+      <div class="card"><h3>Scenario comparison</h3><div class="hint">Annual cost under each scenario vs the approved budget (dashed line).</div><div id="ch-scen" style="margin-top:12px"></div></div>
+      <div class="card"><h3>Scenario cost vs budget by unit</h3><div class="hint">Bar = cost with the selected scenarios. Black tick = approved budget.</div><div id="ch-spread" style="margin-top:12px"></div></div>
+    </div>
+    <div class="card"><div style="overflow:auto"><table id="calcTbl"></table></div></div>
+  </section>
+
+  
+
+  <section class="page" id="p-units">
+    <div class="gi" id="giCards"></div>
+    <div class="card" style="margin-top:16px"><h3>Systems map</h3><div class="hint">Where the data comes from and what is known about each system.</div><div style="overflow:auto;margin-top:10px"><table id="sysTbl"></table></div></div>
+  </section>
+
+  <section class="page" id="p-qs">
+    <div class="grid2">
+      <div class="card"><h3>Open questions</h3><div class="hint">Sample items. Tick them off as they're resolved (saved in this browser).</div><div id="qList" style="margin-top:6px"></div></div>
+      <div class="card"><h3>Budget definitions &amp; constants</h3><div style="overflow:auto;margin-top:10px"><table id="defTbl"></table></div></div>
+    </div>
+  </section>
+</main></div>
+<div class="tip" id="tip"></div>
+<script>const MODE='org';
+// ===== SAMPLE DATA (all figures fictional) =====
+let seed=27;const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
+const gauss=()=>{let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)};
+const addD=(d,n)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);
+const PERIODS=[];for(let i=0;i<26;i++){const d=addD(new Date(2026,5,29),14*i);PERIODS.push({p:'Pay'+(i<12?15+i:i-11),date:d,end:addD(d,13)})}
+// seasonal weight by pay period index (summer → fall → break → spring → May)
+const SEASON=[.55,.6,.62,.8,1.1,1.2,1.2,1.18,1.2,1.15,1.05,1.15,.7,.28,1.05,1.15,1.2,1.2,.85,1.15,1.15,1.1,.75,.5,.48,.5];
+const UNITDEF=[
+ {k:'AQ',short:'Aquatics',sub:'Lifeguards & head guards',budget:305000,bias:.045,trend:.02,noise:.06,summer:1.7,py:.08,sup:'Jordan M.',owner:'Aquatics Coordinator',src:'Monthly ledger export',pos:8,wage:'$11.10 – $15.00',amend:'Budget raised $12k in Aug for HVAC-closure retraining'},
+ {k:'CC',short:'Climbing & Challenge',sub:'Climbing wall & challenge course',budget:120000,bias:.01,trend:0,noise:.07,summer:1.2,py:.03,sup:'Riley S.',owner:'C&C Coordinator',src:'Shift-level tracking',pos:6,wage:'$10.25 – $13.00'},
+ {k:'IM',short:'Intramurals',sub:'Officials & supervisors',budget:250000,bias:.07,trend:.04,noise:.09,summer:.4,py:.05,sup:'Sports Programs team',owner:'Sport Programs Director',src:'Payroll by pay period',pos:5,wage:'$10.25 – $15.00',amend:'Added flag-football league not in original budget'},
+ {k:'MS',short:'Member Services',sub:'Front desk & equipment',budget:275000,bias:-.03,trend:0,noise:.05,summer:1,py:.04,sup:'Casey L.',owner:'Member Services Manager',src:'Payroll by pay period',pos:5,wage:'$10.00 – $13.10'},
+ {k:'OPS',short:'Operations',sub:'Facility operations',budget:255000,bias:-.01,trend:.01,noise:.05,summer:1,py:.06,sup:'Morgan T.',owner:'Operations Manager',src:'Payroll by pay period',pos:5,wage:'$10.00 – $13.10'},
+ {k:'GX',short:'Group X / F45',sub:'Instructors & coaches',budget:150000,bias:-.12,trend:.03,noise:.1,summer:.6,py:.02,sup:'Avery K.',owner:'Fitness Coordinator',src:'Webclock hours',pos:6,wage:'$10.25 – $17.00',amend:'Two instructor vacancies through October'},
+ {k:'PT',short:'Personal Training',sub:'Certified trainers',budget:90000,bias:.02,trend:.16,noise:.08,summer:.7,py:.12,sup:'Quinn R.',owner:'Fitness Coordinator',src:'Payroll by pay period',pos:2,wage:'$13.10 – $16.00',amend:'Budget includes 6 planned hires starting January'}
+];
+const U={},ORDER=UNITDEF.map(u=>u.k);
+UNITDEF.forEach(d=>{const w=SEASON.map((s,i)=>i<4||i>22?s*d.summer:s);const W=w.reduce((a,b)=>a+b,0);
+  const pp=PERIODS.map((P,i)=>{const bud=Math.round(d.budget*w[i]/W);
+    const act=Math.round(bud*(1+d.bias+d.trend*(i/25-.3))*(1+d.noise*gauss()));
+    const py=Math.round(bud/(1+d.py)*(1+.06*gauss()));return{...P,bud,act,py}});
+  const diff=d.budget-pp.reduce((s,r)=>s+r.bud,0);pp[8].bud+=diff;
+  U[d.k]={...d,pp,fy:d.budget,pyTot:pp.reduce((s,r)=>s+r.py,0)}});
+// Cost model (sample positions)
+const CALC0=[
+ ['AQ','Lifeguard – fall/spring',11.40,5.0,95,.10,35],['AQ','Lifeguard – summer',14.00,6.5,45,.10,15],['AQ','Head guard – fall/spring',12.40,4.8,24,.10,35],['AQ','Head guard – summer',15.00,16,5,.10,15],['AQ','New-hire training',11.10,3,30,0,2],
+ ['C&C','Climbing wall supervisor',11.50,6,6,.05,50],['C&C','Climbing instructor',11.50,7,9,.05,50],['C&C','Route setter',11.50,2.6,9,.05,50],['C&C','Belay staff',10.75,3.1,12,.05,50],['C&C','Challenge facilitator',11.25,4.4,9,.05,50],['C&C','Student coordinator',13.00,8,3,.05,50],
+ ['IM','Sports official',10.25,5,80,0,30],['IM','IM supervisor',11.25,6,40,0,30],['IM','Head supervisor',12.25,8,12,0,30],['IM','Sport program intern',15.00,10,2,0,40],
+ ['MS','Member services assistant',10.00,5.5,40,.03,50],['MS','Member services specialist',11.10,5.8,24,.03,50],['MS','Member services manager',12.10,4.9,24,.03,50],['MS','Member services coordinator',13.10,9.6,4,.03,50],
+ ['OPS','Operations assistant',10.00,4.9,52,.02,50],['OPS','Operations specialist',11.10,4.6,20,.02,50],['OPS','Operations manager',12.10,5.3,20,.02,50],['OPS','Operations coordinator',13.10,6,4,.02,50],
+ ['GX','Group X instructor',17.00,1.7,58,0,52],['GX','F45 coach',15.00,3,22,0,52],['GX','GX & F45 coordinator',12.50,4.8,3,0,52],
+ ['PT','Certified personal trainer',16.00,2.5,40,0,50],['PT','PT coordinator',13.10,3.5,3,0,50]
+].map(r=>({u:r[0],pos:r[1],wage:r[2],hrs:r[3],emp:r[4],shrink:r[5],weeks:r[6]}));
+const CALCK={AQ:'AQ','C&C':'CC',IM:'IM',MS:'MS',OPS:'OPS',GX:'GX',PT:'PT'};
+// Positions catalog (sample)
+const POS=[];{let n=40100100;const grade=w=>w<10.5?'U005':w<12.5?'U010':w<14?'U015':'U020';
+ CALC0.forEach(r=>{const u=U[CALCK[r.u]];POS.push({sub:u.short,sup:u.sup,num:String(n+=37),grade:grade(r.wage),name:'RecWell '+r.pos.replace(/ –.*/,'')+' – Student Service',wage:r.wage})});
+ [['Member Services','Member services assistant – non-Purdue student',10.00],['Operations','Operations assistant – non-Purdue student',10.00],['Reservations','Reservations – Student Service',10.25],['Reservations','Premium reservations – Student Service',15.00],['Outreach','Outreach ambassador – Student Service',10.00],['Outreach','Outreach coordinator – Student Service',13.10],['Esports','Gaming lab specialist – Student Service',10.25],['Camp','Kids camp counselor – Student Service',12.50],['Camp','Kids camp coordinator – Student Service',14.50],['Facilities','Maintenance manager – Student Service',12.10]]
+ .forEach(r=>POS.push({sub:r[0],sup:'—',num:String(n+=37),grade:grade(r[2]),name:'RecWell '+r[1],wage:r[2]}))}
+const SYS=[
+ ['Payroll system','Paid hours and dollars by employee and pay period','Exports run by staff each pay period; no direct access','Sample'],
+ ['Time clock','Clocked hours for fitness instructors','Hours sometimes differ from payroll; needs reconciliation','Sample'],
+ ['Scheduling tool','Shift schedules by unit','Not every unit schedules in it','Sample'],
+ ['Budget workbook','Approved annual budget by unit and pay period','One workbook per unit, different formats','Sample'],
+ ['Operational calendar','Facility hours, closures and breaks','Maintained by hand; closures change mid-year','Sample']
+];
+const QS=[
+ ['All','Confirm the approved FY27 budget for each unit and whether mid-year amendments are allowed.'],
+ ['All','Agree on the variance tolerance (currently a 5% placeholder).'],
+ ['All','Should budgets be spread evenly or by the seasonal pattern used here?'],
+ ['AQ','Is the August budget increase for closure retraining one-time or recurring?'],
+ ['IM','The new flag-football league is running over budget. Will it get its own budget line?'],
+ ['GX','Will the two vacant instructor positions be filled, or should the budget be lowered?'],
+ ['PT','Confirm start dates for the six planned January hires.'],
+ ['C&C','Report climbing wall and challenge course separately or together?'],
+ ['MS','Under budget so far. Is that from vacancies or reduced hours?'],
+ ['All','Which date counts for an actual: pay period end or posting date?']
+];
+const DEFS=[
+ ['Approved budget','Annual student-wage budget per unit','Sample'],['Budget to date','Budget scheduled for pay periods that have ended','Rule'],
+ ['Variance to budget','Actual − budget to date (negative = under)','Rule'],['Variance tolerance','±5% (adjustable in the header)','Placeholder'],
+ ['Projected year-end','Actual to date + remaining budget × current actual/budget ratio','Rule'],['Affordable per period','Remaining budget ÷ pay periods left','Rule'],
+ ['Budget spread','Seasonal weights: low summer & breaks, peak fall & spring','Sample'],['Pay periods','26 biweekly; Pay15 starts Jun 29, 2026','Sample'],
+ ['Posting rule','A pay period counts once it has ended','Rule'],['Prior year','Shown for reference only in the detail table','Info']
+];
+
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const fmt=v=>v==null||isNaN(v)?'—':(v<0?'−$':'$')+Math.round(Math.abs(v)).toLocaleString();
+const fmtK=v=>v==null?'—':Math.abs(v)>=1e6?(v<0?'−':'')+'$'+(Math.abs(v)/1e6).toFixed(2)+'M':(v<0?'−':'')+'$'+(Math.abs(v)>=1000?(Math.abs(v)/1000).toFixed(Math.abs(v)>=100000?0:1)+'k':Math.round(Math.abs(v)));
+const pct=(v,d=1)=>v==null||!isFinite(v)?'—':(v>0?'+':'')+(v*100).toFixed(d)+'%';
+const DAY0=new Date(2026,5,29), TODAY=new Date(2026,10,13), DAYMAX=Math.round((addD(PERIODS[25].end,1)-DAY0)/864e5);
+const dstr=d=>d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+const sd=d=>d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+let asOf=TODAY, tol=0.05, curUnit='AQ';
+const ACT=()=>MODE==='unit'?[curUnit]:ORDER;
+const C={ok:'#1f9d61',under:'#2f6fec',over:'#d64545',na:'#d9dde6'};
+function stat(v){if(v==null)return['na','No actuals yet'];if(v<-tol)return['under','Under budget'];if(v>tol)return['over','Over budget'];return['ok','On budget']}
+const posted=r=>r.end<asOf;
+function calc(k){const u=U[k];let budTD=0,actTD=0,n=0;u.pp.forEach(r=>{if(posted(r)){budTD+=r.bud;actTD+=r.act;n++}});
+  const v=n?actTD-budTD:null,vp=n?v/budTD:null,ratio=n?actTD/budTD:1;
+  const proj=actTD+(u.fy-budTD)*ratio,left=26-n,rem=u.fy-actTD;
+  return{budTD,actTD,n,v,vp,ratio,proj,projV:proj-u.fy,projVp:(proj-u.fy)/u.fy,left,rem,
+    afford:left?rem/left:null,planPer:left?(u.fy-budTD)/left:null,curPer:n?actTD/n:null,status:stat(vp),pstatus:stat(n?(proj-u.fy)/u.fy:null)}}
+function totals(){const t={fy:0,py:0,budTD:0,actTD:0,n:0,proj:0,on:0,under:0,over:0,na:0};
+  ACT().forEach(k=>{const c=calc(k),u=U[k];t.fy+=u.fy;t.py+=u.pyTot;t.budTD+=c.budTD;t.actTD+=c.actTD;t.n=Math.max(t.n,c.n);t.proj+=c.proj;t[{ok:'on',under:'under',over:'over',na:'na'}[c.status[0]]]++});
+  t.v=t.actTD-t.budTD;t.vp=t.budTD?t.v/t.budTD:null;t.projV=t.proj-t.fy;t.rem=t.fy-t.actTD;return t}
+const tip=$('#tip');document.addEventListener('mousemove',e=>{const t=e.target.closest('[data-tip]');if(t){tip.innerHTML=t.dataset.tip;tip.style.opacity=1;tip.style.left=Math.min(e.clientX+14,innerWidth-tip.offsetWidth-8)+'px';tip.style.top=(e.clientY+14)+'px'}else tip.style.opacity=0});
+const kpi=(icon,lab,val,cmp)=>`<div class="card kpi"><div class="lab"><i>${icon}</i>${lab}</div><div class="val">${val}</div><div class="cmp">${cmp}</div></div>`;
+// spending: under budget = green arrow, over = red
+const varTag=v=>v==null||!isFinite(v)?'':`<span class="${v<=0?'up':'dn'}">${v>=0?'▲':'▼'} ${pct(v)}</span>`;
+const pill=s=>`<span class="pill s-${s[0]}">${s[1]}</span>`;
+
+function hbars(el,rows,series,opt={}){const W=560,lab=150,rh=series.length*13+14,H=rows.length*rh+30,max=Math.max(1,...rows.flatMap(r=>r.vals.map(v=>v||0)));
+  const sx=v=>lab+(W-lab-60)*(v/max);let s=`<svg class="chart" viewBox="0 0 ${W} ${H}">`;
+  [0,.25,.5,.75,1].forEach(f=>{const x=sx(max*f);s+=`<line x1="${x}" x2="${x}" y1="0" y2="${H-22}" stroke="#eef0f4"/><text x="${x}" y="${H-6}" font-size="10.5" fill="#8a8f9c" text-anchor="middle">${fmtK(max*f)}</text>`});
+  rows.forEach((r,i)=>{const y=i*rh+6;s+=`<text x="${lab-10}" y="${y+rh/2-2}" font-size="12" text-anchor="end" fill="#2a2e37" dominant-baseline="middle">${r.label}</text>`;
+    r.vals.forEach((v,j)=>{const yy=y+j*13;if(v==null){s+=`<text x="${lab+4}" y="${yy+9}" font-size="10.5" fill="#a0a5b1">${opt.empty||'no data'}</text>`;return}
+      const col=typeof series[j].color==='function'?series[j].color(r):series[j].color;
+      s+=`<rect data-tip="<b>${r.label}</b><br>${series[j].name}: ${fmt(v)}${r.extra||''}" x="${lab}" y="${yy}" width="${Math.max(2,sx(v)-lab)}" height="10" rx="3" fill="${col}"/><text x="${sx(v)+5}" y="${yy+9}" font-size="10.5" fill="#545a66">${fmtK(v)}</text>`})});
+  el.innerHTML=s+'</svg>'}
+function bullets(el,rows){const W=560,lab=150,rh=34,H=rows.length*rh+30,max=Math.max(...rows.map(r=>Math.max(r.proj,r.bud)))*1.08;const sx=v=>lab+(W-lab-70)*(v/max);
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}">`;[0,.25,.5,.75,1].forEach(f=>{const x=sx(max*f);s+=`<line x1="${x}" x2="${x}" y1="0" y2="${H-22}" stroke="#eef0f4"/><text x="${x}" y="${H-6}" font-size="10.5" fill="#8a8f9c" text-anchor="middle">${fmtK(max*f)}</text>`});
+  rows.forEach((r,i)=>{const y=i*rh+6,st=stat(r.vp)[0];s+=`<text x="${lab-10}" y="${y+10}" font-size="12" text-anchor="end" fill="#2a2e37" dominant-baseline="middle">${r.label}</text>
+   <rect x="${lab}" y="${y+1}" width="${sx(r.bud)-lab}" height="18" rx="4" fill="#f0f1f4"/>
+   <rect data-tip="<b>${r.label}</b><br>Projected: ${fmt(r.proj)}<br>Budget: ${fmt(r.bud)}<br>${r.proj>r.bud?'Over':'Under'} by ${fmt(Math.abs(r.proj-r.bud))} (${pct(r.vp)})" x="${lab}" y="${y+5}" width="${sx(r.proj)-lab}" height="10" rx="3" fill="${C[st]}"/>
+   <line x1="${sx(r.bud)}" x2="${sx(r.bud)}" y1="${y-2}" y2="${y+22}" stroke="#000" stroke-width="2.5"/>
+   <text x="${Math.max(sx(r.proj),sx(r.bud))+6}" y="${y+10}" font-size="10.5" fill="${C[st]==='#d9dde6'?'#8a8f9c':C[st]}" dominant-baseline="middle" font-weight="600">${pct(r.vp)}</text>`});
+  el.innerHTML=s+'</svg>'}
+function dbars(el,rows){const W=560,lab=150,rh=30,H=rows.length*rh+30;const m=Math.max(tol*1.6,...rows.map(r=>Math.abs(r.v||0)))*1.15;
+  const cx=lab+(W-lab-10)/2,sx=v=>cx+(W-lab-50)/2*(v/m);let s=`<svg class="chart" viewBox="0 0 ${W} ${H}"><rect x="${sx(-tol)}" y="0" width="${sx(tol)-sx(-tol)}" height="${H-22}" fill="#e6f6ee" opacity=".8"/>`;
+  [-m*.75,-m*.375,0,m*.375,m*.75].forEach(v=>s+=`<text x="${sx(v)}" y="${H-6}" font-size="10.5" fill="#8a8f9c" text-anchor="middle">${pct(v,0)}</text>`);
+  s+=`<line x1="${cx}" x2="${cx}" y1="0" y2="${H-22}" stroke="#16181d"/>`;
+  rows.forEach((r,i)=>{const y=i*rh+6;s+=`<text x="${lab-10}" y="${y+10}" font-size="12" text-anchor="end" fill="#2a2e37" dominant-baseline="middle">${r.label}</text>`;
+    if(r.v==null)return;const col=C[stat(r.v)[0]],x0=Math.min(cx,sx(r.v));
+    s+=`<rect data-tip="<b>${r.label}</b><br>Variance to budget: ${fmt(r.d)} (${pct(r.v)})" x="${x0}" y="${y+2}" width="${Math.max(2,Math.abs(sx(r.v)-cx))}" height="16" rx="3" fill="${col}"/>
+    <text x="${r.v<0?x0-5:sx(r.v)+5}" y="${y+10}" font-size="10.5" fill="#545a66" text-anchor="${r.v<0?'end':'start'}" dominant-baseline="middle">${pct(r.v)}</text>`});
+  el.innerHTML=s+'</svg>'}
+function cumChart(el,u,c){const W=560,H=280,L=50,R=12,T=12,B=32,n=26;let a=0,b=0;const BUD=[],ACT=[],PRJ=[];let last=-1;
+  u.pp.forEach((r,i)=>{b+=r.bud;BUD.push(b);if(posted(r)){a+=r.act;ACT.push(a);last=i}else ACT.push(null)});
+  let p=last>=0?ACT[last]:0;u.pp.forEach((r,i)=>{if(i<last)PRJ.push(null);else if(i===last)PRJ.push(p);else{p+=r.bud*c.ratio;PRJ.push(p)}});
+  const max=Math.max(...BUD,...PRJ.filter(v=>v!=null))*1.06,sx=i=>L+(W-L-R)*i/(n-1),sy=v=>T+(H-T-B)*(1-v/max);
+  const path=arr=>{let d='',pen=false;arr.forEach((v,i)=>{if(v==null){pen=false;return}d+=(pen?'L':'M')+sx(i)+','+sy(v);pen=true});return d};
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}">`;for(let g=0;g<=4;g++){const v=max*g/4;s+=`<line x1="${L}" x2="${W-R}" y1="${sy(v)}" y2="${sy(v)}" stroke="#eef0f4"/><text x="${L-6}" y="${sy(v)}" font-size="10.5" fill="#8a8f9c" text-anchor="end" dominant-baseline="middle">${fmtK(v)}</text>`}
+  u.pp.forEach((r,i)=>{if(i%4===0)s+=`<text x="${sx(i)}" y="${H-10}" font-size="10" fill="#8a8f9c" text-anchor="middle">${sd(r.date)}</text>`});
+  s+=`<path d="${path(BUD)} L${sx(n-1)},${sy(0)} L${sx(0)},${sy(0)}Z" fill="#9aa3b5" opacity=".1"/><path d="${path(BUD)}" fill="none" stroke="#9aa3b5" stroke-width="2.2" stroke-dasharray="6 4"/>`;
+  if(last>=0)s+=`<path d="${path(PRJ)}" fill="none" stroke="#8fb0f5" stroke-width="2.4" stroke-dasharray="2 4" stroke-linecap="round"/><circle cx="${sx(n-1)}" cy="${sy(PRJ[n-1])}" r="4" fill="#8fb0f5"/><text x="${sx(n-1)-6}" y="${sy(PRJ[n-1])-10}" font-size="10.5" text-anchor="end" fill="#2f6fec">Proj. ${fmtK(PRJ[n-1])}</text>`;
+  s+=`<path d="${path(ACT)}" fill="none" stroke="#2f6fec" stroke-width="3"/>`;ACT.forEach((v,i)=>{if(v!=null)s+=`<circle cx="${sx(i)}" cy="${sy(v)}" r="3" fill="#2f6fec"/>`});
+  s+=`<text x="${sx(n-1)-6}" y="${sy(BUD[n-1])+16}" font-size="10.5" text-anchor="end" fill="#6b7180">Budget ${fmtK(BUD[n-1])}</text>`;
+  u.pp.forEach((r,i)=>{const w=(W-L-R)/(n-1);s+=`<rect x="${sx(i)-w/2}" y="${T}" width="${w}" height="${H-T-B}" fill="transparent" data-tip="<b>${r.p}</b> · ${sd(r.date)}–${sd(r.end)}<br>Cum. budget: ${fmt(BUD[i])}<br>Cum. actual: ${ACT[i]!=null?fmt(ACT[i])+' ('+pct(ACT[i]/BUD[i]-1)+')':'—'}${PRJ[i]!=null&&i>last?'<br>Projected: '+fmt(PRJ[i]):''}"/>`});
+  el.innerHTML=s+'</svg>'}
+function ppBars(el,u){const W=560,H=280,L=46,R=8,T=12,B=32,n=26,max=Math.max(...u.pp.map(r=>Math.max(r.bud,r.act)))*1.1,bw=(W-L-R)/n,sy=v=>T+(H-T-B)*(1-v/max);
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}">`;for(let g=0;g<=4;g++){const v=max*g/4;s+=`<line x1="${L}" x2="${W-R}" y1="${sy(v)}" y2="${sy(v)}" stroke="#eef0f4"/><text x="${L-6}" y="${sy(v)}" font-size="10.5" fill="#8a8f9c" text-anchor="end" dominant-baseline="middle">${fmtK(v)}</text>`}
+  u.pp.forEach((r,i)=>{const x=L+i*bw,has=posted(r),st=has?stat(r.act/r.bud-1)[0]:'na';
+    s+=`<rect x="${x+1}" y="${sy(r.bud)}" width="${bw-2}" height="${sy(0)-sy(r.bud)}" rx="2" fill="#e3e6ec"/>`;
+    if(has)s+=`<rect x="${x+bw*.25}" y="${sy(r.act)}" width="${bw*.5}" height="${sy(0)-sy(r.act)}" rx="2" fill="${C[st]}"/>`;
+    if(i%4===0)s+=`<text x="${x+bw/2}" y="${H-10}" font-size="10" fill="#8a8f9c" text-anchor="middle">${r.p}</text>`;
+    s+=`<rect x="${x}" y="${T}" width="${bw}" height="${H-T-B}" fill="transparent" data-tip="<b>${r.p}</b> · ${sd(r.date)}<br>Budget ${fmt(r.bud)}<br>Actual ${has?fmt(r.act)+' ('+pct(r.act/r.bud-1)+')':'not yet posted'}"/>`});
+  el.innerHTML=s+'</svg>'}
+// monthly aggregation
+const MONTHS=[];PERIODS.forEach(p=>{const m=p.date.getFullYear()*12+p.date.getMonth();if(!MONTHS.includes(m))MONTHS.push(m)});
+const mlab=m=>new Date(Math.floor(m/12),m%12,1).toLocaleDateString('en-US',{month:'short'});
+const mkey=d=>d.getFullYear()*12+d.getMonth();
+function monthChart(el){const W=1100,H=260,L=56,R=10,T=14,B=30,n=MONTHS.length;const rows=MONTHS.map(m=>{let b=0,a=0,ap=0,any=false;ACT().forEach(k=>U[k].pp.forEach(r=>{if(mkey(r.date)===m){b+=r.bud;if(posted(r)){a+=r.act;any=true}}}));return{m,b,a,any}});
+  const max=Math.max(...rows.map(r=>Math.max(r.b,r.a)))*1.12,gw=(W-L-R)/n,sy=v=>T+(H-T-B)*(1-v/max);
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}">`;for(let g=0;g<=4;g++){const v=max*g/4;s+=`<line x1="${L}" x2="${W-R}" y1="${sy(v)}" y2="${sy(v)}" stroke="#eef0f4"/><text x="${L-6}" y="${sy(v)}" font-size="10.5" fill="#8a8f9c" text-anchor="end" dominant-baseline="middle">${fmtK(v)}</text>`}
+  rows.forEach((r,i)=>{const x=L+i*gw,bw=gw*.32;s+=`<rect x="${x+gw*.16}" y="${sy(r.b)}" width="${bw}" height="${sy(0)-sy(r.b)}" rx="3" fill="#d9dde6"/>`;
+    if(r.any){const v=r.a/r.b-1;s+=`<rect x="${x+gw*.16+bw+3}" y="${sy(r.a)}" width="${bw}" height="${sy(0)-sy(r.a)}" rx="3" fill="#2f6fec"/><text x="${x+gw/2}" y="${sy(Math.max(r.a,r.b))-6}" font-size="10.5" text-anchor="middle" fill="${C[stat(v)[0]]}" font-weight="600">${pct(v,0)}</text>`}
+    else s+=`<rect x="${x+gw*.16+bw+3}" y="${sy(r.b)}" width="${bw}" height="${sy(0)-sy(r.b)}" rx="3" fill="#b9cdf7" opacity=".45"/>`;
+    s+=`<text x="${x+gw/2}" y="${H-10}" font-size="11" text-anchor="middle" fill="#6b7180">${mlab(r.m)}</text><rect x="${x}" y="${T}" width="${gw}" height="${H-T-B}" fill="transparent" data-tip="<b>${mlab(r.m)}</b><br>Budget ${fmt(r.b)}<br>Actual ${r.any?fmt(r.a)+' ('+pct(r.a/r.b-1)+')':'not yet posted'}"/>`});
+  el.innerHTML=s+'</svg>'}
+
+
+// ---------- VISUAL KPI CARDS ----------
+function vizKpis(t){
+  const used=t.actTD/t.fy, sched=t.budTD/t.fy, st=stat(t.vp)[0], pst=stat(t.projV/t.fy)[0], col=C[st]==='#d9dde6'?'#2f6fec':C[st];
+  // 1. donut: spent vs remaining
+  const R=46,c=2*Math.PI*R,arc=Math.min(1,used)*c,ang=sched*2*Math.PI-Math.PI/2;
+  const donut=`<svg viewBox="0 0 120 120" width="112" height="112"><circle cx="60" cy="60" r="${R}" fill="none" stroke="#eef0f4" stroke-width="16"/>
+   <circle cx="60" cy="60" r="${R}" fill="none" stroke="${col}" stroke-width="16" stroke-dasharray="${arc} ${c}" transform="rotate(-90 60 60)" style="transition:stroke-dasharray .4s"/>
+   <line x1="${60+(R-11)*Math.cos(ang)}" y1="${60+(R-11)*Math.sin(ang)}" x2="${60+(R+11)*Math.cos(ang)}" y2="${60+(R+11)*Math.sin(ang)}" stroke="#000" stroke-width="2.5"/>
+   <text x="60" y="58" text-anchor="middle" font-size="20" font-weight="750" fill="#16181d">${Math.round(used*100)}%</text><text x="60" y="75" text-anchor="middle" font-size="10" fill="#6b7180">used</text></svg>`;
+  const c1=`<div class="card vk" data-tip="Spent ${fmt(t.actTD)} of ${fmt(t.fy)}<br>Remaining ${fmt(t.rem)}<br>Black tick = ${Math.round(sched*100)}% scheduled by now"><div class="lab"><i>$</i>Annual Budget</div>
+   <div class="vrow">${donut}<div><div class="vbig">${fmtK(t.fy)}</div><div class="leg"><span><i style="background:${col}"></i>Spent ${fmtK(t.actTD)}</span><span><i style="background:#e3e6ec"></i>Left ${fmtK(t.rem)}</span><span><i style="background:#000;width:3px"></i>Should be at ${Math.round(sched*100)}%</span></div></div></div></div>`;
+  // 2. gauge: used vs scheduled
+  const gx=v=>{const a=Math.PI*(1-Math.min(1,v));return[80+62*Math.cos(a),78-62*Math.sin(a)]};
+  const [ux,uy]=gx(used),[sx_,sy_]=gx(sched),na=Math.PI*(1-Math.min(1,sched));
+  const gauge=`<svg viewBox="0 0 160 96" width="100%" style="max-width:210px"><path d="M18 78 A62 62 0 0 1 142 78" fill="none" stroke="#eef0f4" stroke-width="14" stroke-linecap="round"/>
+   <path d="M18 78 A62 62 0 0 1 ${ux} ${uy}" fill="none" stroke="${col}" stroke-width="14" stroke-linecap="round"/>
+   <line x1="${80+50*Math.cos(na)}" y1="${78-50*Math.sin(na)}" x2="${80+74*Math.cos(na)}" y2="${78-74*Math.sin(na)}" stroke="#000" stroke-width="3"/>
+   <text x="80" y="66" text-anchor="middle" font-size="22" font-weight="750" fill="#16181d">${(used*100).toFixed(0)}%</text><text x="80" y="82" text-anchor="middle" font-size="9.5" fill="#6b7180">spent of year's budget</text>
+   <text x="14" y="94" font-size="9" fill="#8a8f9c">0%</text><text x="146" y="94" font-size="9" fill="#8a8f9c" text-anchor="end">100%</text></svg>`;
+  const ahead=used-sched;
+  const c2=`<div class="card vk" data-tip="Spent ${(used*100).toFixed(1)}% · scheduled ${(sched*100).toFixed(1)}%"><div class="lab"><i>✓</i>Spent vs Schedule</div>
+   <div style="text-align:center;margin-top:6px">${gauge}</div><div class="vfoot"><b style="color:${col}">${Math.abs(ahead)<.01?'On schedule':(ahead>0?'Spending ahead of schedule':'Spending behind schedule')}</b> · tick = where we should be (${(sched*100).toFixed(0)}%)</div></div>`;
+  // 3. variance meter
+  const m=Math.max(.15,Math.abs(t.vp||0)*1.2),mx=v=>10+180*(v+m)/(2*m);const vpos=mx(Math.max(-m,Math.min(m,t.vp||0)));
+  const maxb=Math.max(t.budTD,t.actTD);
+  const meter=`<svg viewBox="0 0 200 92" width="100%">
+   <text x="0" y="10" font-size="9.5" fill="#6b7180">Budget</text><rect x="44" y="2" width="${150*t.budTD/maxb}" height="10" rx="3" fill="#c8cdd7"/>
+   <text x="0" y="27" font-size="9.5" fill="#6b7180">Actual</text><rect x="44" y="19" width="${150*t.actTD/maxb}" height="10" rx="3" fill="${col}"/>
+   <rect x="10" y="48" width="180" height="12" rx="6" fill="#fdecec"/><rect x="10" y="48" width="${mx(-tol)-10}" height="12" rx="6" fill="#e8effd"/>
+   <rect x="${mx(-tol)}" y="48" width="${mx(tol)-mx(-tol)}" height="12" fill="#cfeedd"/>
+   <line x1="${mx(0)}" x2="${mx(0)}" y1="44" y2="64" stroke="#16181d" stroke-width="1"/>
+   <circle cx="${vpos}" cy="54" r="8" fill="${col}" stroke="#fff" stroke-width="2.5" style="transition:cx .4s"/>
+   <text x="10" y="78" font-size="9" fill="#2f6fec">Under</text><text x="${mx(0)}" y="78" font-size="9" fill="#1f9d61" text-anchor="middle">On budget</text><text x="190" y="78" font-size="9" fill="#d64545" text-anchor="end">Over</text></svg>`;
+  const c3=`<div class="card vk" data-tip="Budget to date ${fmt(t.budTD)}<br>Actual to date ${fmt(t.actTD)}<br>Variance ${fmt(t.v)} (${pct(t.vp)})"><div class="lab"><i>±</i>Over / Under Budget</div>
+   <div style="margin-top:10px">${meter}</div><div class="vfoot"><b style="color:${col}">${pct(t.vp)}</b> · ${fmt(Math.abs(t.v))} ${t.v>0?'over':'under'} budget so far</div></div>`;
+  // 4. mini projection chart (all units)
+  let cb=0,ca=0,last=-1;const B=[],A=[];PERIODS.forEach((p,i)=>{let b=0,a=0;ACT().forEach(k=>{b+=U[k].pp[i].bud;a+=U[k].pp[i].act});cb+=b;B.push(cb);if(p.end<asOf){ca+=a;A.push(ca);last=i}else A.push(null)});
+  const ratio=t.budTD?t.actTD/t.budTD:1;const P=B.map((b,i)=>i<last?null:i===last?A[last]:A[last]+(b-B[last])*ratio);
+  const W=200,H=86,ymax=Math.max(B[25],P[25]||0)*1.05,X=i=>4+(W-8)*i/25,Y=v=>H-6-(H-14)*v/ymax;
+  const pth=arr=>arr.map((v,i)=>v==null?'':`${X(i)},${Y(v)}`).filter(Boolean).join(' L');
+  const proj=`<svg viewBox="0 0 ${W} ${H}" width="100%"><line x1="4" x2="${W-4}" y1="${Y(B[25])}" y2="${Y(B[25])}" stroke="#000" stroke-width="1" stroke-dasharray="2 3"/>
+   <text x="6" y="${Y(B[25])-4}" font-size="9" fill="#16181d">Budget ${fmtK(B[25])}</text>
+   <path d="M${pth(B)}" fill="none" stroke="#c8cdd7" stroke-width="2"/>
+   ${last>=0?`<path d="M${pth(P)}" fill="none" stroke="${C[pst]}" stroke-width="2" stroke-dasharray="2 3"/><path d="M${pth(A)} L${X(last)},${H-6} L4,${H-6}Z" fill="${col}" opacity=".12"/><path d="M${pth(A)}" fill="none" stroke="${col}" stroke-width="2.5"/><circle cx="${X(25)}" cy="${Y(P[25])}" r="4.5" fill="${C[pst]}"/>`:''}</svg>`;
+  const c4=`<div class="card vk" data-tip="Projected year-end ${fmt(t.proj)}<br>Annual budget ${fmt(t.fy)}<br>${t.projV>0?'Over':'Under'} by ${fmt(Math.abs(t.projV))}"><div class="lab"><i>↗</i>Projected Year-End</div>
+   <div style="margin-top:8px">${proj}</div><div class="vfoot"><b style="color:${C[pst]}">${fmtK(t.proj)}</b> · ${pct(t.projV/t.fy)} ${t.projV>0?'over':'under'} budget at current pace</div></div>`;
+  return c1+c2+c3+c4}
+// ---------- DASHBOARD ----------
+function renderDash(){const t=totals();
+  $('#kpis').innerHTML=vizKpis(t);
+  let h=`<tr><th>Unit</th><th class="r">Annual budget</th><th style="min-width:210px">Budget used</th><th class="r">Budget to date</th><th class="r">Actual to date</th><th class="r">Variance</th><th class="r">Projected year-end</th><th class="r">Proj. vs budget</th><th>Status</th></tr>`;
+  ORDER.forEach(k=>{const u=U[k],c=calc(k);const fp=Math.min(100,c.actTD/u.fy*100),mp=c.budTD/u.fy*100;
+   h+=`<tr style="cursor:pointer" onclick="goUnit('${k}')"><td class="unitname"><b>${u.short}</b><span>${u.sub}</span></td><td class="r">${fmt(u.fy)}</td>
+   <td><div class="bar" data-tip="<b>${u.short}</b><br>Used: ${fmt(c.actTD)} (${fp.toFixed(1)}%)<br>Scheduled: ${fmt(c.budTD)} (${mp.toFixed(1)}%)"><div class="f" style="width:${fp}%;background:${C[c.status[0]]}"></div><div class="m" style="left:${mp}%"></div></div><div class="small" style="margin-top:4px">${fp.toFixed(1)}% used · ${mp.toFixed(0)}% scheduled</div></td>
+   <td class="r">${fmt(c.budTD)}</td><td class="r">${c.n?fmt(c.actTD):'—'}</td><td class="r">${c.n?`<span style="color:${C[c.status[0]]}">${fmt(c.v)}</span><div class="small">${pct(c.vp)}</div>`:'—'}</td>
+   <td class="r">${fmt(c.proj)}</td><td class="r"><span style="color:${C[c.pstatus[0]]};font-weight:650">${fmt(c.projV)}</span><div class="small">${pct(c.projVp)}</div></td><td>${pill(c.status)}</td></tr>`});
+  h+=`<tr style="font-weight:700"><td>All units</td><td class="r">${fmt(t.fy)}</td><td><div class="bar"><div class="f" style="width:${t.actTD/t.fy*100}%;background:#000"></div><div class="m" style="left:${t.budTD/t.fy*100}%;background:var(--gold)"></div></div></td><td class="r">${fmt(t.budTD)}</td><td class="r">${fmt(t.actTD)}</td><td class="r">${fmt(t.v)}<div class="small">${pct(t.vp)}</div></td><td class="r">${fmt(t.proj)}</td><td class="r">${fmt(t.projV)}<div class="small">${pct(t.projV/t.fy)}</div></td><td></td></tr>`;
+  $('#unitTbl').innerHTML=h;
+  hbars($('#ch-bva'),ORDER.map(k=>{const c=calc(k);return{label:U[k].short,st:c.status[0],vals:c.n?[c.budTD,c.actTD]:[null,null],extra:c.n?`<br>Variance: ${fmt(c.v)} (${pct(c.vp)})`:''}}),[{name:'Budget to date',color:'#9aa3b5'},{name:'Actual to date',color:r=>C[r.st]}],{empty:'no actuals yet'});
+  bullets($('#ch-proj'),ORDER.map(k=>{const c=calc(k);return{label:U[k].short,proj:c.proj,bud:U[k].fy,vp:c.n?c.projVp:null}}));
+  monthChart($('#ch-month'))}
+function renderUnitDash(){const u=U[curUnit],c=calc(curUnit);$('#kpis').innerHTML=vizKpis(totals());
+  $('#uNote').innerHTML=`<b>${u.short}</b> · ${u.sub} · budget owner: ${u.owner} · supervisor: ${u.sup}${u.amend?' · '+u.amend:''}`;
+  cumChart($('#u-cum'),u,c);ppBars($('#u-bars'),u);monthChart($('#ch-month'));
+  $('#uFacts').innerHTML=[['Annual budget',fmt(u.fy)],['Remaining',fmt(c.rem)],['Pay periods left',c.left],['Affordable / pay period',fmt(c.afford)],['Current avg / pay period',fmt(c.curPer)],['Positions',u.pos],['Wage range',u.wage],['Actuals source',u.src],['Prior-year actual',fmt(u.pyTot)]].map(x=>`<div><span>${x[0]}</span><b>${x[1]}</b></div>`).join('')}
+// ---------- PAY PERIODS ----------
+function goUnit(k){curUnit=k;show('pp')}
+function renderPP(){const u=U[curUnit],c=calc(curUnit);
+  $('#ppTabs').style.display=MODE==='unit'?'none':'flex';$('#ppTabs').innerHTML=ORDER.map(k=>`<button class="tab ${k===curUnit?'on':''}" onclick="curUnit='${k}';renderPP()">${U[k].short}</button>`).join('');
+  $('#ppNote').innerHTML=`<b>${u.short}</b> · ${u.sub} · budget owner: ${u.owner}. ${u.amend?u.amend+'.':''} <span class="small">(sample)</span>`;
+  $('#ppKpis').innerHTML=kpi('$','Annual Budget',fmt(u.fy),`${fmt(c.rem)} remaining · ${c.left} pay periods left`)+
+   kpi('✓','Actual to Date',c.n?fmt(c.actTD):'—',`${(c.actTD/u.fy*100).toFixed(1)}% used vs ${(c.budTD/u.fy*100).toFixed(1)}% scheduled`)+
+   kpi('±','Variance to Budget',c.n?fmt(c.v):'—',c.n?`${varTag(c.vp)} vs ${fmt(c.budTD)} budget to date`:'Waiting for actuals')+
+   kpi('↗','Projected Year-End',fmt(c.proj),`${varTag(c.projVp)} · ${pill(c.pstatus)}`);
+  cumChart($('#ch-cum'),u,c);ppBars($('#ch-ppbars'),u);
+  let cur=-1;u.pp.forEach((r,i)=>{if(r.date<=asOf)cur=i});
+  $('#ppGrid').innerHTML=u.pp.map((r,i)=>{const has=posted(r),ratio=has?r.act/r.bud:0,st=has?stat(ratio-1)[0]:'na',col=C[st];
+    return `<div class="pp ${has?'':'future'} ${i===cur&&!has?'cur':''}" data-tip="<b>${r.p}</b> · ${sd(r.date)}–${sd(r.end)}<br>Budget ${fmt(r.bud)}<br>Actual ${has?fmt(r.act):'—'}${has?'<br>Variance '+fmt(r.act-r.bud)+' ('+pct(ratio-1)+')':''}">
+     <div class="h">${r.p}<span>${sd(r.date)}</span></div><div class="vb"><div style="width:${has?Math.min(100,ratio*100):100}%;background:${col}"></div></div>
+     <div class="n"><span>${has?fmtK(r.act):'—'} / ${fmtK(r.bud)}</span><b style="color:${has?col:'#a0a5b1'}">${has?Math.round(ratio*100)+'%':(i===cur?'in progress':'upcoming')}</b></div></div>`}).join('');
+  let h=`<tr><th>Period</th><th>Dates</th><th class="r">Budget</th><th class="r">Actual</th><th class="r">Variance $</th><th class="r">Variance %</th><th class="r">Cum. budget</th><th class="r">Cum. actual</th><th class="r">Cum. variance</th><th class="r">% of annual used</th><th class="r" style="color:#b0b4bd">Prior year</th></tr>`;
+  let cb=0,ca=0;u.pp.forEach(r=>{cb+=r.bud;const has=posted(r);if(has)ca+=r.act;const v=has?r.act-r.bud:null;
+   h+=`<tr style="${has?'':'color:#9aa0ab'}"><td><b>${r.p}</b></td><td>${sd(r.date)} – ${sd(r.end)}</td><td class="r">${fmt(r.bud)}</td><td class="r">${has?fmt(r.act):''}</td><td class="r" style="color:${has?C[stat(v/r.bud)[0]]:''}">${has?fmt(v):''}</td><td class="r">${has?pct(v/r.bud):''}</td><td class="r">${fmt(cb)}</td><td class="r">${has?fmt(ca):''}</td><td class="r">${has?fmt(ca-cb):''}</td><td class="r">${has?(ca/u.fy*100).toFixed(1)+'%':''}</td><td class="r" style="color:#b0b4bd">${fmt(r.py)}</td></tr>`});
+  h+=`<tr style="font-weight:700"><td>Total</td><td></td><td class="r">${fmt(u.fy)}</td><td class="r">${fmt(c.actTD)}</td><td class="r">${c.n?fmt(c.v):''}</td><td class="r">${c.n?pct(c.vp):''}</td><td></td><td></td><td></td><td></td><td class="r" style="color:#b0b4bd">${fmt(u.pyTot)}</td></tr>`;
+  $('#ppTbl').innerHTML=h}
+// ---------- BUDGET VS ACTUAL ----------
+let bvaSort={k:'vp',d:-1},burnSort={k:'gap',d:-1};
+function sortRows(rows,s){return rows.sort((a,b)=>{const x=a[s.k],y=b[s.k];if(x==null)return 1;if(y==null)return-1;return(typeof x==='string'?x.localeCompare(y):x-y)*s.d})}
+function renderBVA(){const t=totals();
+  $('#bvaKpis').innerHTML=kpi('$','Budget to Date',fmt(t.budTD),`${(t.budTD/t.fy*100).toFixed(1)}% of ${fmt(t.fy)} annual budget`)+kpi('✓','Actual to Date',fmt(t.actTD),`${t.n} pay periods posted`)+
+   kpi('±','Net Variance',fmt(t.v),`${varTag(t.vp)} · ${t.over} over, ${t.under} under, ${t.on} on budget`)+kpi('◔','Remaining Budget',fmt(t.rem),`${((t.rem/t.fy)*100).toFixed(1)}% of the year's budget left`);
+  dbars($('#ch-var'),ORDER.map(k=>{const c=calc(k);return{label:U[k].short,v:c.n?c.vp:null,d:c.v}}));
+  // heatmap
+  let h=`<table class="heat"><tr><th></th>${MONTHS.map(m=>`<th>${mlab(m)}</th>`).join('')}</tr>`;
+  ORDER.forEach(k=>{h+=`<tr><th style="text-align:right;padding-right:8px;white-space:nowrap;color:#2a2e37">${U[k].short}</th>`;MONTHS.forEach(m=>{let b=0,a=0,any=false;U[k].pp.forEach(r=>{if(mkey(r.date)===m){b+=r.bud;if(posted(r)){a+=r.act;any=true}}});
+    if(!any){h+=`<td style="background:#f5f6f8;color:#c0c4cc" data-tip="<b>${U[k].short} · ${mlab(m)}</b><br>Budget ${fmt(b)}<br>Not yet posted">·</td>`;return}
+    const v=a/b-1,i=Math.min(1,Math.abs(v)/(tol*3)),st=stat(v)[0];const bg=st==='ok'?`rgba(31,157,97,${.15+.25*i})`:st==='over'?`rgba(214,69,69,${.2+.6*i})`:`rgba(47,111,236,${.2+.6*i})`;
+    h+=`<td style="background:${bg};color:${i>.6&&st!=='ok'?'#fff':'#16181d'}" data-tip="<b>${U[k].short} · ${mlab(m)}</b><br>Budget ${fmt(b)}<br>Actual ${fmt(a)}<br>${pct(v)}">${pct(v,0)}</td>`});h+='</tr>'});
+  $('#ch-heat').innerHTML=h+'</table>';
+  // burn
+  const br=ORDER.map(k=>{const c=calc(k),u=U[k];return{name:u.short,fy:u.fy,rem:c.rem,left:c.left,plan:c.planPer,afford:c.afford,cur:c.curPer,gap:c.left&&c.n?(c.curPer/(c.afford||1)-1):null,proj:c.proj,projV:c.projV,st:c.pstatus}});
+  sortRows(br,burnSort);const thb=(k,l,r)=>`<th class="${r?'r':''}" onclick="burnSort={k:'${k}',d:burnSort.k==='${k}'?-burnSort.d:-1};renderBVA()">${l}${burnSort.k===k?(burnSort.d>0?' ↑':' ↓'):''}</th>`;
+  $('#burnTbl').innerHTML=`<tr>${thb('name','Unit')}${thb('fy','Annual budget',1)}${thb('rem','Remaining',1)}${thb('left','PPs left',1)}${thb('plan','Budgeted / PP left',1)}${thb('afford','Affordable / PP',1)}${thb('cur','Current avg / PP',1)}${thb('gap','Burn vs affordable',1)}${thb('projV','Projected over/under',1)}<th>Outlook</th></tr>`+
+   br.map(r=>`<tr><td style="white-space:nowrap"><b>${r.name}</b></td><td class="r">${fmt(r.fy)}</td><td class="r">${fmt(r.rem)}</td><td class="r">${r.left}</td><td class="r">${fmt(r.plan)}</td><td class="r"><b>${fmt(r.afford)}</b></td><td class="r">${fmt(r.cur)}</td>
+   <td class="r">${r.gap==null?'—':`<span style="color:${C[stat(r.gap)[0]]};font-weight:650">${pct(r.gap)}</span>`}</td><td class="r" style="color:${C[r.st[0]]};font-weight:650">${fmt(r.projV)}</td><td>${pill(r.st)}</td></tr>`).join('')+
+   `<tr><td colspan="10" class="small">“Affordable / PP” = remaining budget ÷ pay periods left. “Current avg / PP” is not seasonally adjusted, so it reads high early in the year when fewer heavy periods have posted.</td></tr>`;
+  const rows=ORDER.map(k=>{const c=calc(k),u=U[k];return{name:u.short,fy:u.fy,budTD:c.budTD,actTD:c.actTD,v:c.n?c.v:null,vp:c.vp,used:c.actTD/u.fy,sched:c.budTD/u.fy,proj:c.proj,projVp:c.projVp,st:c.status,amend:u.amend||''}});
+  sortRows(rows,bvaSort);const th=(k,l,r)=>`<th class="${r?'r':''}" onclick="bvaSort={k:'${k}',d:bvaSort.k==='${k}'?-bvaSort.d:-1};renderBVA()">${l}${bvaSort.k===k?(bvaSort.d>0?' ↑':' ↓'):''}</th>`;
+  $('#bvaTbl').innerHTML=`<tr>${th('name','Unit')}${th('fy','Annual budget',1)}${th('budTD','Budget to date',1)}${th('actTD','Actual to date',1)}${th('v','Variance $',1)}${th('vp','Variance %',1)}${th('used','% used',1)}${th('sched','% scheduled',1)}${th('proj','Projected YE',1)}${th('projVp','Proj. vs budget',1)}<th>Status</th><th>Budget notes</th></tr>`+
+   rows.map(r=>`<tr><td style="white-space:nowrap"><b>${r.name}</b></td><td class="r">${fmt(r.fy)}</td><td class="r">${fmt(r.budTD)}</td><td class="r">${fmt(r.actTD)}</td><td class="r" style="color:${C[r.st[0]]}">${fmt(r.v)}</td><td class="r">${pct(r.vp)}</td><td class="r">${(r.used*100).toFixed(1)}%</td><td class="r">${(r.sched*100).toFixed(1)}%</td><td class="r">${fmt(r.proj)}</td><td class="r">${pct(r.projVp)}</td><td>${pill(r.st)}</td><td class="small" style="min-width:220px">${r.amend}</td></tr>`).join('')}
+// ---------- BUDGET BUILDER ----------
+const CALCNAME={AQ:'AQ',CC:'C&C',IM:'IM',MS:'MS',OPS:'OPS',GX:'GX',PT:'PT'};
+CALC0.forEach(r=>{if(r.ws==null)r.ws=r.u==='OPS'?.02:0});
+let CALC=JSON.parse(JSON.stringify(CALC0)),calcUnit='All';
+const SC={wage:false,shrink:false,ws:false},SV={wage:.5,shrink:.15,ws:.10};
+const SCDEF=[
+ {k:'wage',icon:'$',title:'Minimum wage +$0.50',desc:v=>`Every wage step rises $${v.toFixed(2)}/hr (the student scale is pegged to minimum wage).`,unit:'$/hr',step:.05,show:v=>v.toFixed(2),read:x=>x},
+ {k:'shrink',icon:'↓',title:'Shrinkage at 15%',desc:v=>`All positions use ${(v*100).toFixed(0)}% shrinkage (call-offs, unfilled shifts) instead of their own rate.`,unit:'%',step:1,show:v=>(v*100).toFixed(0),read:x=>x/100},
+ {k:'ws',icon:'🎓',title:'Work-study at 10%',desc:v=>`${(v*100).toFixed(0)}% of wage cost is covered by federal work-study and comes off the budget.`,unit:'%',step:1,show:v=>(v*100).toFixed(0),read:x=>x/100}
+];
+function eff(r,f){return{wage:r.wage+(f.wage?SV.wage:0),shrink:f.shrink?SV.shrink:r.shrink,ws:f.ws?SV.ws:r.ws}}
+function cost(r,f={}){const e=eff(r,f);return e.wage*r.hrs*r.emp*(1-e.shrink)*r.weeks*(1-e.ws)}
+const scopeRows=()=>CALC.filter(r=>MODE==='unit'?r.u===CALCNAME[curUnit]:(calcUnit==='All'||r.u===calcUnit));
+const scopeBudget=()=>MODE==='unit'?U[curUnit].fy:(calcUnit==='All'?ORDER.reduce((s,k)=>s+U[k].fy,0):U[CALCK[calcUnit]].fy);
+const sumCost=(rows,f)=>rows.reduce((s,r)=>s+cost(r,f),0);
+function toggleSc(k){if(k==='all'){const on=!(SC.wage&&SC.shrink&&SC.ws);SC.wage=SC.shrink=SC.ws=on}else if(k==='none'){SC.wage=SC.shrink=SC.ws=false}else SC[k]=!SC[k];renderCalc()}
+function renderCalc(){
+  if(MODE!=='unit'){const units=['All',...new Set(CALC.map(r=>r.u))];$('#calcTabs').innerHTML=units.map(u=>`<button class="tab ${u===calcUnit?'on':''}" onclick="calcUnit='${u}';renderCalc()">${u==='All'?'All units':U[CALCK[u]].short}</button>`).join('')}
+  const rows=scopeRows(),B=scopeBudget(),base=sumCost(rows,{}),cur=sumCost(rows,SC),all=sumCost(rows,{wage:1,shrink:1,ws:1});
+  const anyOn=SC.wage||SC.shrink||SC.ws;
+  // scenario cards
+  $('#scen').innerHTML=SCDEF.map(d=>{const c=sumCost(rows,{[d.k]:1}),dv=c-base;return `<div class="card sc ${SC[d.k]?'on':''}" onclick="if(event.target.tagName!=='INPUT')toggleSc('${d.k}')">
+    <div class="sch"><span class="lab"><i>${d.icon}</i>${d.title.replace(/\$0\.50|15%|10%/,m=>d.k==='wage'?'$'+SV.wage.toFixed(2):d.show(SV[d.k])+'%')}</span><span class="sw ${SC[d.k]?'on':''}"></span></div>
+    <div class="small" style="margin:8px 0 10px;min-height:32px">${d.desc(SV[d.k])}</div>
+    <div class="scv"><div><div class="small">Impact on cost</div><div class="scd" style="color:${dv>0?'var(--over)':'var(--ok)'}">${dv>=0?'+':'−'}${fmt(Math.abs(dv)).replace('−','')}</div><div class="small">${pct(dv/base)} vs base model</div></div>
+    <label class="small" style="text-align:right">Set to<br><input class="cell" type="number" step="${d.step}" value="${d.show(SV[d.k])}" onclick="event.stopPropagation()" onchange="SV.${d.k}=(${d.read})(+this.value);renderCalc()"> ${d.unit}</label></div></div>`}).join('')+
+   `<div class="card sc combo"><div class="lab"><i>Σ</i>Combined</div><div class="small" style="margin:8px 0 10px">All three scenarios together.</div>
+    <div class="scd" style="color:${all>B?'var(--over)':'var(--ok)'}">${fmt(all)}</div><div class="small">${pct((all-base)/base)} vs base · ${pct((all-B)/B)} vs budget</div>
+    <div style="display:flex;gap:6px;margin-top:10px"><button class="btn" style="padding:6px 10px" onclick="toggleSc('all')">${SC.wage&&SC.shrink&&SC.ws?'Turn all off':'Apply all'}</button><button class="btn" style="padding:6px 10px" onclick="toggleSc('none')">Base</button></div></div>`;
+  const hrs=rows.reduce((s,r)=>{const e=eff(r,SC);return s+r.hrs*r.emp*r.weeks*(1-e.shrink)},0),hc=rows.reduce((s,r)=>s+r.emp,0);
+  const lbl=anyOn?'Scenario cost':'Modeled cost';
+  $('#calcKpis').innerHTML=kpi('$',lbl,fmt(cur),anyOn?`${varTag((cur-base)/base)} vs base model ${fmt(base)}`:'Base model — no scenarios applied')+
+   kpi('◎','vs Approved Budget',fmt(cur-B),`${varTag((cur-B)/B)} against ${fmt(B)}`)+
+   kpi('👥','Headcount',hc.toLocaleString(),`${Math.round(hrs).toLocaleString()} paid hours / year`)+
+   kpi('≈','Blended wage',hrs?'$'+(cur/hrs).toFixed(2):'—','Net cost ÷ paid hours');
+  // scenario comparison chart
+  const items=[['Approved budget',B,'#16181d'],['Base model',base,'#9aa3b5'],...SCDEF.map(d=>[d.title.replace(/\$0\.50|15%|10%/,m=>d.k==='wage'?'$'+SV.wage.toFixed(2):d.show(SV[d.k])+'%'),sumCost(rows,{[d.k]:1}),null]),['All three combined',all,null]];
+  if(anyOn&&!(SC.wage&&SC.shrink&&SC.ws)&&[SC.wage,SC.shrink,SC.ws].filter(Boolean).length>1)items.push(['Your selection',cur,'#CFB991']);
+  const W=560,lab=170,rh=30,H=items.length*rh+28,mx=Math.max(...items.map(i=>i[1]))*1.12,sx=v=>lab+(W-lab-70)*v/mx;
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}"><line x1="${sx(B)}" x2="${sx(B)}" y1="0" y2="${H-20}" stroke="#16181d" stroke-dasharray="3 3"/><text x="${sx(B)}" y="${H-6}" font-size="10" text-anchor="middle" fill="#16181d">budget</text>`;
+  items.forEach((it,i)=>{const y=i*rh+4,col=it[2]||(it[1]>B*(1+tol)?'#d64545':it[1]<B*(1-tol)?'#2f6fec':'#1f9d61');
+    s+=`<text x="${lab-10}" y="${y+11}" font-size="12" text-anchor="end" dominant-baseline="middle" fill="#2a2e37" ${i<2?'font-weight="600"':''}>${it[0]}</text><rect data-tip="<b>${it[0]}</b><br>${fmt(it[1])}<br>${pct((it[1]-B)/B)} vs budget" x="${lab}" y="${y+2}" width="${sx(it[1])-lab}" height="18" rx="4" fill="${col}" opacity="${i===0?.85:1}"/><text x="${sx(it[1])+6}" y="${y+11}" font-size="11" dominant-baseline="middle" fill="#545a66">${fmtK(it[1])}${i>0?' · '+pct((it[1]-B)/B,1):''}</text>`});
+  $('#ch-scen').innerHTML=s+'</svg>';
+  if(MODE==='unit')spreadChart($('#ch-spread'),U[curUnit],cur);
+  else bullets($('#ch-spread'),ORDER.map(k=>{const r=CALC.filter(x=>CALCK[x.u]===k),c=sumCost(r,SC);return{label:U[k].short,proj:c,bud:U[k].fy,vp:(c-U[k].fy)/U[k].fy}}));
+  // table
+  let h=`<tr>${MODE==='unit'?'':'<th>Unit</th>'}<th>Position</th><th class="r">Wage $/hr</th><th class="r">Hrs/wk per emp</th><th class="r">Employees</th><th class="r">Shrinkage %</th><th class="r">Work-study %</th><th class="r">Weeks</th><th class="r">Base cost</th>${anyOn?'<th class="r">Scenario cost</th><th class="r">Change</th>':''}</tr>`;
+  CALC.forEach((r,i)=>{if(!rows.includes(r))return;const b=cost(r),c=cost(r,SC),e=eff(r,SC);
+   const inp=(f,v,step,eV)=>`<input class="cell" type="number" step="${step}" value="${v}" onchange="CALC[${i}].${f}=+this.value${f==='shrink'||f==='ws'?'/100':''};renderCalc()">${anyOn&&eV!=null&&eV!==v?`<div class="small" style="color:#8E6F3E">→ ${eV}</div>`:''}`;
+   h+=`<tr>${MODE==='unit'?'':`<td><b>${r.u}</b></td>`}<td>${r.pos}</td><td class="r">${inp('wage',r.wage,'.05',+e.wage.toFixed(2))}</td><td class="r">${inp('hrs',r.hrs,'.1')}</td><td class="r">${inp('emp',r.emp,'1')}</td><td class="r">${inp('shrink',+(r.shrink*100).toFixed(1),'.5',+(e.shrink*100).toFixed(1))}</td><td class="r">${inp('ws',+(r.ws*100).toFixed(1),'.5',+(e.ws*100).toFixed(1))}</td><td class="r">${inp('weeks',r.weeks,'1')}</td><td class="r">${fmt(b)}</td>${anyOn?`<td class="r" style="font-weight:650">${fmt(c)}</td><td class="r" style="color:${c>b?'var(--over)':'var(--ok)'}">${c-b>=0?'+':'−'}${fmt(Math.abs(c-b)).replace('−','')}</td>`:''}</tr>`});
+  const cs=MODE==='unit'?7:8;h+=`<tr style="font-weight:700;background:#fafbfc"><td colspan="${cs}">Total vs approved budget ${fmt(B)}</td><td class="r">${fmt(base)}</td>${anyOn?`<td class="r">${fmt(cur)}</td><td class="r">${pct((cur-base)/base)}</td>`:''}</tr>`;
+  $('#calcTbl').innerHTML=h}
+function spreadChart(el,u,total){const W=560,H=260,L=46,R=8,T=12,B=32,n=26,w=u.pp.map(r=>r.bud/u.fy),nb=w.map(x=>x*total),max=Math.max(...u.pp.map(r=>r.bud),...nb)*1.1,bw=(W-L-R)/n,sy=v=>T+(H-T-B)*(1-v/max);
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}">`;for(let g=0;g<=4;g++){const v=max*g/4;s+=`<line x1="${L}" x2="${W-R}" y1="${sy(v)}" y2="${sy(v)}" stroke="#eef0f4"/><text x="${L-6}" y="${sy(v)}" font-size="10.5" fill="#8a8f9c" text-anchor="end" dominant-baseline="middle">${fmtK(v)}</text>`}
+  u.pp.forEach((r,i)=>{const x=L+i*bw;s+=`<rect x="${x+1}" y="${sy(r.bud)}" width="${bw-2}" height="${sy(0)-sy(r.bud)}" rx="2" fill="#e3e6ec"/><rect x="${x+bw*.25}" y="${sy(nb[i])}" width="${bw*.5}" height="${sy(0)-sy(nb[i])}" rx="2" fill="#CFB991"/>`;
+    if(i%4===0)s+=`<text x="${x+bw/2}" y="${H-10}" font-size="10" fill="#8a8f9c" text-anchor="middle">${r.p}</text>`;
+    s+=`<rect x="${x}" y="${T}" width="${bw}" height="${H-T-B}" fill="transparent" data-tip="<b>${r.p}</b> · ${sd(r.date)}<br>Current budget ${fmt(r.bud)}<br>Built budget ${fmt(nb[i])} (${pct(nb[i]/r.bud-1)})"/>`});
+  el.innerHTML=s+'</svg>'}
+// ---------- UNITS / QS ----------
+function renderUnits(){$('#giCards').innerHTML=ORDER.map(k=>{const u=U[k],c=calc(k);const f=[['Supervisor',u.sup],['Budget owner',u.owner],['Annual budget',fmt(u.fy)],['Used to date',`${fmt(c.actTD)} (${(c.actTD/u.fy*100).toFixed(1)}%)`],['Projected year-end',`${fmt(c.proj)} (${pct(c.projVp)})`],['# Positions',u.pos],['Wage range',u.wage],['Actuals source',u.src],['Prior-year actual',fmt(u.pyTot)]];
+  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><h3>${u.short}</h3>${pill(c.status)}</div><dl>${f.map(x=>`<dt>${x[0]}</dt><dd>${x[1]}</dd>`).join('')}</dl>${u.amend?`<div class="flag" style="background:#faf5ea;border-color:#efe3c8;color:#5b4724">✎ ${u.amend}</div>`:''}</div>`}).join('');
+  $('#sysTbl').innerHTML='<tr><th>System</th><th>What data it holds</th><th>Known limitations</th><th>Source</th></tr>'+SYS.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td class="small">${r[3]}</td></tr>`).join('')}
+let done={};try{done=JSON.parse(localStorage.getItem('rw-q2')||'{}')}catch(e){}
+function renderQs(){$('#qList').innerHTML=QS.map((q,i)=>MODE==='unit'&&q[0]!=='All'&&q[0]!==curUnit?'':`<label class="q ${done[i]?'done':''}"><input type="checkbox" ${done[i]?'checked':''} onchange="done[${i}]=this.checked;try{localStorage.setItem('rw-q2',JSON.stringify(done))}catch(e){};renderQs()"><span><span class="pill s-na" style="margin-right:6px">${q[0]}</span>${q[1]}</span></label>`).join('');
+  $('#qbadge').textContent=QS.filter((q,i)=>!done[i]&&(MODE!=='unit'||q[0]==='All'||q[0]===curUnit)).length;
+  $('#defTbl').innerHTML='<tr><th>Item</th><th>Definition / value</th><th>Type</th></tr>'+DEFS.map(d=>`<tr><td><b>${d[0]}</b></td><td>${d[1]}</td><td><span class="pill ${d[2]==='Placeholder'?'s-over':d[2]==='Rule'?'s-ok':'s-na'}">${d[2]}</span></td></tr>`).join('')}
+// ---------- NAV ----------
+const TITLES={dash:['Dashboard','FY27 student wages — actuals vs approved budget · sample data'],pp:['Pay Periods','Budget vs actual for every pay period'],bva:['Budget vs Actual','Variance, remaining budget and burn rate by unit'],calc:['Budget Builder','Build the wage budget by position and test scenarios against the approved budget'],units:['Units & Data','Budget owners, data sources and notes per unit'],qs:['Open Questions','Items to confirm, plus budget definitions']};
+let page='dash';
+function show(p){page=p;$$('.nav').forEach(n=>n.classList.toggle('on',n.dataset.p===p));$$('.page').forEach(s=>s.classList.toggle('on',s.id==='p-'+p));
+  $('#ttl').textContent=TITLES[p][0];$('#subttl').textContent=TITLES[p][1];$('#scrub').style.display=['dash','pp','bva','units'].includes(p)?'flex':'none';render();scrollTo(0,0)}
+function render(){$('#asof').textContent=dstr(asOf);({dash:MODE==='unit'?renderUnitDash:renderDash,pp:renderPP,bva:renderBVA,calc:renderCalc,units:renderUnits,qs:renderQs})[page]();if(MODE==='unit')renderQs()}
+$$('.nav').forEach(n=>n.onclick=()=>show(n.dataset.p));
+const day=$('#day');day.max=DAYMAX;const setDay=d=>{day.value=d;asOf=addD(DAY0,+d);render()};
+day.oninput=()=>setDay(day.value);
+const todayIdx=Math.round((TODAY-DAY0)/864e5);$('#today').onclick=()=>{stop();setDay(todayIdx)};
+let timer=null;const stop=()=>{clearInterval(timer);timer=null;$('#play').textContent='▶'};
+$('#play').onclick=()=>{if(timer)return stop();if(+day.value>=DAYMAX)setDay(0);$('#play').textContent='❚❚';timer=setInterval(()=>{const n=Math.min(DAYMAX,+day.value+14);setDay(n);if(n>=DAYMAX)stop()},650)};
+$('#tol').oninput=e=>{tol=e.target.value/100;$('#tolv').textContent=e.target.value+'%';render()};
+$('#resetCalc').onclick=()=>{CALC=JSON.parse(JSON.stringify(CALC0));SC.wage=SC.shrink=SC.ws=false;SV.wage=.5;SV.shrink=.15;SV.ws=.10;renderCalc()};
+$('#exp').onclick=()=>{const L=[['Unit','Period','Start','End','Budget','Actual','Variance']];ORDER.forEach(k=>U[k].pp.forEach(r=>L.push([U[k].short,r.p,r.date.toISOString().slice(0,10),r.end.toISOString().slice(0,10),r.bud,posted(r)?r.act:'',posted(r)?r.act-r.bud:''])));
+  const csv=L.map(l=>l.map(x=>`"${x}"`).join(',')).join('\n'),b=$('#exp');
+  navigator.clipboard.writeText(csv).then(()=>{b.textContent='✓ Copied — paste into Excel';setTimeout(()=>b.textContent='⧉ Copy CSV',2200)}).catch(()=>{b.textContent='Copy blocked';setTimeout(()=>b.textContent='⧉ Copy CSV',2200)})};
+if(MODE==='unit'){const sel=$('#unitPick');sel.innerHTML=ORDER.map(k=>`<option value="${k}">${U[k].short}</option>`).join('');sel.value=curUnit;sel.onchange=()=>{curUnit=sel.value;render()};
+  TITLES.dash=['Unit Overview',"One unit's wage budget vs actuals · sample data"];TITLES.pp=['Pay Periods','Budget vs actual for every pay period in this unit'];}
+renderQs();setDay(todayIdx);
+</script></body></html>
